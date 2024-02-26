@@ -41,6 +41,9 @@ jobs:
             -Dsonar.organization=sonarqube-gitaction 
             -Dsonar.projectKey=sonarqube-gitaction_gitaction-poc-10-java-ci
             -Dsonar.sources=. 
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Send notification on Slack using Webhooks - Success
         if: ${{ success() }}
@@ -62,6 +65,6 @@ jobs:
               "text": "Git push done in the repo. Maven build failed. Please check the build logs for details."
             }
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          # SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          # SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
