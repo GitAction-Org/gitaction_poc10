@@ -28,6 +28,14 @@ jobs:
         with:
           name: code-coverage
           path: target/site/jacoco/index.html
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v2
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.organization=sonarqube-gitaction 
+            -Dsonar.projectKey=sonarqube-gitaction_gitaction-poc-10-java-ci
+            -Dsonar.sources=. 
 
       - name: Send notification on Slack using Webhooks - Success
         if: ${{ success() }}
@@ -49,4 +57,6 @@ jobs:
               "text": "Git push done in the repo. Maven build failed. Please check the build logs for details."
             }
         env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
