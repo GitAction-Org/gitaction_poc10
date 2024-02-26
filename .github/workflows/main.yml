@@ -53,7 +53,7 @@ jobs:
         with:
           payload: |
             {
-              "text": "Git push done in the repo. Maven project built successfully. Code coverage report published."
+              "text": "Maven project built successfully."
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -64,7 +64,7 @@ jobs:
         with:
           payload: |
             {
-              "text": "Git push done in the repo. Maven build failed. Please check the build logs for details."
+              "text": "Maven build failed. Please check the build logs for details."
             }
         env:
           # SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
