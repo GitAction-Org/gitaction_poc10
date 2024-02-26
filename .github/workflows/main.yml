@@ -18,13 +18,24 @@ jobs:
           mvn clean install
           export MAVEN_EXIT_CODE=$?
 
+      - name: Generate code coverage report
+        run: |
+          # Assuming you have a code coverage tool (e.g., JaCoCo) configured in your Maven project
+          mvn jacoco:report
+
+      - name: Publish code coverage result
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage
+          path: target/site/jacoco/index.html
+
       - name: Send notification on Slack using Webhooks - Success
         if: ${{ success() }}
         uses: slackapi/slack-github-action@v1.24.0
         with:
           payload: |
             {
-              "text": "Git push done in the repo. Maven project built successfully."
+              "text": "Git push done in the repo. Maven project built successfully. Code coverage report published."
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
