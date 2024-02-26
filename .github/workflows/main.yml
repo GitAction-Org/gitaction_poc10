@@ -27,7 +27,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: code-coverage
-          path: target/site/jacoco_gitaction/index.html
+          path: target/site/jacoco/index.html
 
       - name: Send notification on Slack using Webhooks - Success
         if: ${{ success() }}
