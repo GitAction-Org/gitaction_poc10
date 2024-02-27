@@ -1,9 +1,9 @@
-name: slack_github_action
+name: slack_github_actions
 
 on:
   push:
     branches:
-      - main
+      - self_hosted_runner_windows
 
 jobs:
   slack_notifier:
