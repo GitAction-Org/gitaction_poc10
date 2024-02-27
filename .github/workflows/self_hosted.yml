@@ -20,45 +20,34 @@ jobs:
         run: |
           Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
 
-      # - name: Check out repository
-      #   uses: actions/checkout@v2
+      - name: Check out repository
+        uses: actions/checkout@v2
 
-      # - name: Build Maven project
-      #   run: |
-      #     mvn clean install
-      #     $env:MAVEN_EXIT_CODE=$LASTEXITCODE
+      - name: Build Maven project
+        run: |
+          mvn clean install
+          $env:MAVEN_EXIT_CODE=$LASTEXITCODE
 
-      # - name: Generate code coverage report
-      #   run: |
-      #     mvn jacoco:report
+      - name: Generate code coverage report
+        run: |
+          mvn jacoco:report
 
-      # - name: Publish code coverage result
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: code-coverage
-      #     path: target/site/jacoco/index.html
+      - name: Publish code coverage result
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage
+          path: target/site/jacoco/index.html
 
       - name: SonarQube Scan
         run: |
-          # Path to SonarScanner executable (adjust based on your installation)
-          $sonarScannerPath = "D:\sonarqube-9.3.0.51899\sonarqube-9.3.0.51899\bin\windows-x86-64\sonar-scanner.bat"
-          
-          # SonarScanner parameters
-          $sonarParams = @(
-              "-Dsonar.organization=sonarqube-gitaction",
-              "-Dsonar.projectKey=sonarqube-gitaction_gitaction-poc-10-java-ci",
-              "-Dsonar.sources=.",
-              "-Dsonar.host.url=https://sonarcloud.io",
-              "-Dsonar.java.binaries=./target/classes",
-              "-Dsonar.login=$env:SONAR_TOKEN"
-          )
-
-          # Navigate to the directory containing SonarScanner
-          Set-Location "D:\sonarqube-9.3.0.51899\sonarqube-9.3.0.51899\bin\windows-x86-64"
-
-          # Run SonarScanner using Start-Process
-          Start-Process -FilePath "sonar-scanner.bat" -ArgumentList $sonarParams -Wait
-
+          # Adjust the path to SonarScanner and other parameters
+          D:\sonarqube-9.3.0.51899\sonarqube-9.3.0.51899\bin\windows-x86-64\sonar-scanner.bat \
+          -Dsonar.organization=sonarqube-gitaction \
+          -Dsonar.projectKey=sonarqube-gitaction_gitaction-poc-10-java-ci \
+          -Dsonar.sources=. \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.java.binaries=./target/classes \
+          -Dsonar.login=$env:SONAR_TOKEN
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
