@@ -53,8 +53,11 @@ jobs:
               "-Dsonar.login=$env:SONAR_TOKEN"
           )
 
+          # Navigate to the directory containing SonarScanner
+          Set-Location "D:\sonarqube-7.9.1\bin\windows-x86-64"
+
           # Run SonarScanner using Start-Process
-          Start-Process -FilePath $sonarScannerPath -ArgumentList $sonarParams -Wait
+          Start-Process -FilePath "sonar-scanner.bat" -ArgumentList $sonarParams -Wait
 
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
