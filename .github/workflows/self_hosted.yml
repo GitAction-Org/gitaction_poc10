@@ -18,37 +18,41 @@ jobs:
 
       - name: Set PowerShell Execution Policy
         run: |
-             Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+
       - name: Check out repository
         uses: actions/checkout@v2
 
       - name: Build Maven project
         run: |
-          # cd  D:\apache-maven-3.6.3\bin\
           mvn clean install
           $env:MAVEN_EXIT_CODE=$LASTEXITCODE
+
       - name: Generate code coverage report
         run: |
-          
           mvn jacoco:report
+
       - name: Publish code coverage result
         uses: actions/upload-artifact@v2
         with:
           name: code-coverage
           path: target/site/jacoco/index.html
+
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@master
-        with:
-          projectBaseDir: .
-          args: >
-            -Dsonar.organization=sonarqube-gitaction 
-            -Dsonar.projectKey=sonarqube-gitaction_gitaction-poc-10-java-ci
-            -Dsonar.sources=.
-            -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.java.binaries=./target/classes
+        run: |
+          # Path to SonarScanner executable (adjust based on your installation)
+          $sonarScannerPath = "D:\sonarqube-7.9.1\bin\windows-x86-64\sonar-scanner.bat"
+          
+          # Run SonarScanner with necessary parameters
+          & $sonarScannerPath -Dsonar.organization=sonarqube-gitaction `
+                              -Dsonar.projectKey=sonarqube-gitaction_gitaction-poc-10-java-ci `
+                              -Dsonar.sources=. `
+                              -Dsonar.host.url=https://sonarcloud.io `
+                              -Dsonar.java.binaries=./target/classes `
+                              -Dsonar.login=$env:SONAR_TOKEN
+
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Send notification on Slack using Webhooks - Success
         if: ${{ success() }}
@@ -70,6 +74,4 @@ jobs:
               "text": "Maven build failed. Please check the build logs for details."
             }
         env:
-          # SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          # SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
