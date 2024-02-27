@@ -3,7 +3,7 @@ name: slack_github_action
 on:
   push:
     branches:
-      - self_hosted_runner_windows
+      - main
 
 jobs:
   slack_notifier:
@@ -17,17 +17,15 @@ jobs:
           java-version: '11'
 
       - name: Set PowerShell Execution Policy
-        run: |
-             Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+        run: .\Set-ExecutionPolicy.ps1
 
       - name: Check out repository
         uses: actions/checkout@v2
 
       - name: Build Maven project
         run: |
-          # cd  D:\apache-maven-3.6.3\bin\
           mvn clean install
-          $env:MAVEN_EXIT_CODE=$LASTEXITCODE
+          export MAVEN_EXIT_CODE=$?
       - name: Generate code coverage report
         run: |
           
@@ -37,16 +35,12 @@ jobs:
         with:
           name: code-coverage
           path: target/site/jacoco/index.html
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@master
+      - name: Download SonarScanner for MSBuild
+        uses: SonarSource/sonar-scanner-msbuild@4.10.0
         with:
-          projectBaseDir: .
-          args: >
-            -Dsonar.organization=sonarqube-gitaction 
-            -Dsonar.projectKey=sonarqube-gitaction_gitaction-poc-10-java-ci
-            -Dsonar.sources=.
-            -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.java.binaries=./target/classes
+          sonarLogin: ${{ secrets.SONAR_TOKEN }}
+          organization: 'sonarqube-gitaction'
+          projectKey: 'sonarqube-gitaction_gitaction-poc-10-java-ci'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
