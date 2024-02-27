@@ -53,8 +53,8 @@ jobs:
               "-Dsonar.login=$env:SONAR_TOKEN"
           )
 
-          # Run SonarScanner
-          Invoke-Expression "$sonarScannerPath $($sonarParams -join ' ')"
+          # Run SonarScanner using Start-Process
+          Start-Process -FilePath $sonarScannerPath -ArgumentList $sonarParams -Wait
 
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
