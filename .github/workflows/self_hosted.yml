@@ -43,13 +43,18 @@ jobs:
           # Path to SonarScanner executable (adjust based on your installation)
           $sonarScannerPath = "D:\sonarqube-7.9.1\bin\windows-x86-64\sonar-scanner.bat"
           
-          # Run SonarScanner with necessary parameters
-          Invoke-Expression "$sonarScannerPath -Dsonar.organization=sonarqube-gitaction " `
-                                    "-Dsonar.projectKey=sonarqube-gitaction_gitaction-poc-10-java-ci " `
-                                    "-Dsonar.sources=. " `
-                                    "-Dsonar.host.url=https://sonarcloud.io " `
-                                    "-Dsonar.java.binaries=./target/classes " `
-                                    "-Dsonar.login=$env:SONAR_TOKEN"
+          # SonarScanner parameters
+          $sonarParams = @(
+              "-Dsonar.organization=sonarqube-gitaction",
+              "-Dsonar.projectKey=sonarqube-gitaction_gitaction-poc-10-java-ci",
+              "-Dsonar.sources=.",
+              "-Dsonar.host.url=https://sonarcloud.io",
+              "-Dsonar.java.binaries=./target/classes",
+              "-Dsonar.login=$env:SONAR_TOKEN"
+          )
+
+          # Run SonarScanner
+          Invoke-Expression "$sonarScannerPath $($sonarParams -join ' ')"
 
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
