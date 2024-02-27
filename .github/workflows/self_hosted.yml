@@ -36,23 +36,19 @@ jobs:
         with:
           name: code-coverage
           path: target/site/jacoco/index.html
-      - name: Download SonarScanner for MSBuild
-        uses: SonarSource/sonar-scanner-msbuild@master
-        with:
-          sonarLogin: ${{ secrets.SONAR_TOKEN }}
-          organization: 'sonarqube-gitaction'
-          projectKey: 'sonarqube-gitaction_gitaction-poc-10-java-ci'
-
       - name: SonarQube Scan
-        run: MSBuild.SonarQube.Runner.exe begin /k:"sonarqube-gitaction_gitaction-poc-10-java-ci" /d:sonar.organization="sonarqube-gitaction" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.java.binaries="target/classes" /d:sonar.sources="."
-
-      # - name: Build Maven project (again if needed)
-      #   run: |
-      #     mvn clean install
-      #     $env:MAVEN_EXIT_CODE=$LASTEXITCODE
-
-      - name: SonarQube Scan (end)
-        run: MSBuild.SonarQube.Runner.exe end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        uses: sonarsource/sonarqube-scan-action@master
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.organization=sonarqube-gitaction 
+            -Dsonar.projectKey=sonarqube-gitaction_gitaction-poc-10-java-ci
+            -Dsonar.sources=.
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.java.binaries=./target/classes
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Send notification on Slack using Webhooks - Success
         if: ${{ success() }}
