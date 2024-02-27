@@ -37,7 +37,7 @@ jobs:
           name: code-coverage
           path: target/site/jacoco/index.html
       - name: Download SonarScanner for MSBuild
-        uses: SonarSource/sonar-scanner-msbuild@4.10.0
+        uses: SonarSource/sonar-scanner-msbuild@master
         with:
           sonarLogin: ${{ secrets.SONAR_TOKEN }}
           organization: 'sonarqube-gitaction'
