@@ -1,4 +1,4 @@
-name: slack_github_actions
+name: slack_github_action
 
 on:
   push:
@@ -17,15 +17,16 @@ jobs:
           java-version: '11'
 
       - name: Set PowerShell Execution Policy
-        run: .\Set-ExecutionPolicy.ps1
-
+        run: |
+             Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
       - name: Check out repository
         uses: actions/checkout@v2
 
       - name: Build Maven project
         run: |
+          # cd  D:\apache-maven-3.6.3\bin\
           mvn clean install
-          export MAVEN_EXIT_CODE=$?
+          $env:MAVEN_EXIT_CODE=$LASTEXITCODE
       - name: Generate code coverage report
         run: |
           
@@ -41,9 +42,17 @@ jobs:
           sonarLogin: ${{ secrets.SONAR_TOKEN }}
           organization: 'sonarqube-gitaction'
           projectKey: 'sonarqube-gitaction_gitaction-poc-10-java-ci'
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: SonarQube Scan
+        run: MSBuild.SonarQube.Runner.exe begin /k:"sonarqube-gitaction_gitaction-poc-10-java-ci" /d:sonar.organization="sonarqube-gitaction" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.java.binaries="target/classes" /d:sonar.sources="."
+
+      # - name: Build Maven project (again if needed)
+      #   run: |
+      #     mvn clean install
+      #     $env:MAVEN_EXIT_CODE=$LASTEXITCODE
+
+      - name: SonarQube Scan (end)
+        run: MSBuild.SonarQube.Runner.exe end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
       - name: Send notification on Slack using Webhooks - Success
         if: ${{ success() }}
