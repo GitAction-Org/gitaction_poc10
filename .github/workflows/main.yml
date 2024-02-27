@@ -7,7 +7,8 @@ on:
 
 jobs:
   slack_notifier:
-    runs-on: ubuntu-latest
+    runs-on: self_hosted_label
+
 
     steps:
       - name: Set up JDK 11
