@@ -6,8 +6,11 @@ on:
       - master
 
 jobs:
-  slack_notifier:
+  # slack_notifier:
+  build:
     runs-on: self_hosted_label
+  
+    # runs-on: self_hosted_label
 
 
     steps:
