@@ -7,7 +7,7 @@ on:
 
 jobs:
   slack_notifier:
-    runs-on: self_hosted_linux
+    runs-on: self-hosted_linux
 
     steps:
       - name: Set up JDK 11
@@ -15,42 +15,33 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '11'
+
       - name: Check out repository
         uses: actions/checkout@v2
 
       - name: Install JFrog CLI
         run: |
           curl -fL https://getcli.jfrog.io | sh
+          sudo mv jfrog /usr/local/bin/  # Assuming jfrog is in the current directory
 
       - name: Build Maven project
         run: |
           mvn clean install
           export MAVEN_EXIT_CODE=$?
+
       - name: Generate code coverage report
         run: |
           mvn jacoco:report
+
       - name: Publish code coverage result
         uses: actions/upload-artifact@v2
         with:
           name: code-coverage
           path: target/site/jacoco/index.html
-      # - name: SonarQube Scan
-      #   uses: sonarsource/sonarqube-scan-action@v2
-      #   with:
-      #     projectBaseDir: .
-      #     args: >
-      #       -Dsonar.organization=sonarqube-gitaction 
-      #       -Dsonar.projectKey=sonarqube-gitaction_gitaction-poc-10-java-ci
-      #       -Dsonar.sources=.
-      #       -Dsonar.host.url=https://sonarcloud.io
-      #       -Dsonar.java.binaries=./target/classes
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Set JFrog CLI Path
         run: |
-          export PATH=$PATH:/path/to/jfrog-cli-directory
+          export PATH=$PATH:/usr/local/bin
 
       - name: Push Artifacts to JFrog
         run: |
