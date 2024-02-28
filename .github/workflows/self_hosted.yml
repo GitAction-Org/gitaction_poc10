@@ -45,7 +45,8 @@ jobs:
 
       - name: Push Artifacts to JFrog
         run: |
-          jfrog rt u target/*.jar artifacts_pocs-libs-snapshot-local/
+              jfrog rt u target/*.jar artifacts_pocs-libs-snapshot-local/ --url=https://aritfacts.jfrog.io/artifactory/artifacts_pocs-libs-snapshot-local/
+
         env:
           JFROG_API_KEY: ${{ secrets.JFROG_API_KEY }}
           JFROG_USERNAME: ${{ secrets.JFROG_USERNAME }}
