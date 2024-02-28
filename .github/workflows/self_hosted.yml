@@ -30,25 +30,26 @@ jobs:
         with:
           name: code-coverage
           path: target/site/jacoco/index.html
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v2
-        with:
-          projectBaseDir: .
-          args: >
-            -Dsonar.organization=sonarqube-gitaction 
-            -Dsonar.projectKey=sonarqube-gitaction_gitaction-poc-10-java-ci
-            -Dsonar.sources=.
-            -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.java.binaries=./target/classes
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # - name: SonarQube Scan
+      #   uses: sonarsource/sonarqube-scan-action@v2
+      #   with:
+      #     projectBaseDir: .
+      #     args: >
+      #       -Dsonar.organization=sonarqube-gitaction 
+      #       -Dsonar.projectKey=sonarqube-gitaction_gitaction-poc-10-java-ci
+      #       -Dsonar.sources=.
+      #       -Dsonar.host.url=https://sonarcloud.io
+      #       -Dsonar.java.binaries=./target/classes
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Push Artifacts to JFrog
         run: |
           # Use JFrog CLI or any other tool to push artifacts to JFrog
           # Example command:
-          # jfrog rt u target/*.jar your-jfrog-repository/
+          jfrog rt u target/*.jar artifacts_pocs-libs-snapshot-local/
+
         env:
           JFROG_API_KEY: AKCpBrwZ8DACFkXPTtm5sUshk2BwbGjgdCb5R5mskP4z3vnTLw12bJGjMeZeobKCpGWHZWzWs
           JFROG_USERNAME: onkarko@cybage.com
