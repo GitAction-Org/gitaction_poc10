@@ -3,7 +3,7 @@ name: slack_github_action
 on:
   push:
     branches:
-      - self_hosted_runner_windows 
+      - jfrog_artifacts
 
 jobs:
   slack_notifier:
@@ -24,7 +24,6 @@ jobs:
           export MAVEN_EXIT_CODE=$?
       - name: Generate code coverage report
         run: |
-          
           mvn jacoco:report
       - name: Publish code coverage result
         uses: actions/upload-artifact@v2
@@ -44,6 +43,16 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: Push Artifacts to JFrog
+        run: |
+          # Use JFrog CLI or any other tool to push artifacts to JFrog
+          # Example command:
+          # jfrog rt u target/*.jar your-jfrog-repository/
+        env:
+          JFROG_API_KEY: AKCpBrwZ8DACFkXPTtm5sUshk2BwbGjgdCb5R5mskP4z3vnTLw12bJGjMeZeobKCpGWHZWzWs
+          JFROG_USERNAME: onkarko@cybage.com
+          JFROG_URL: https://your-jfrog-instance/artifactory/
 
       - name: Send notification on Slack using Webhooks - Success
         if: ${{ success() }}
@@ -65,6 +74,4 @@ jobs:
               "text": "Maven build failed. Please check the build logs for details."
             }
         env:
-          # SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          # SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
