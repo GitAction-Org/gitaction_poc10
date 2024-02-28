@@ -3,7 +3,7 @@ name: slack_github_action
 on:
   push:
     branches:
-      - jfrog_artifacts
+      - self_hosted_runner_windows 
 
 jobs:
   slack_notifier:
@@ -17,6 +17,10 @@ jobs:
           java-version: '11'
       - name: Check out repository
         uses: actions/checkout@v2
+
+      - name: Install JFrog CLI
+        run: |
+          curl -fL https://getcli.jfrog.io | sh
 
       - name: Build Maven project
         run: |
@@ -44,16 +48,16 @@ jobs:
       #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
+      - name: Set JFrog CLI Path
+        run: |
+          export PATH=$PATH:/path/to/jfrog-cli-directory
+
       - name: Push Artifacts to JFrog
         run: |
-          # Use JFrog CLI or any other tool to push artifacts to JFrog
-          # Example command:
           jfrog rt u target/*.jar artifacts_pocs-libs-snapshot-local/
-
         env:
-          JFROG_API_KEY: AKCpBrwZ8DACFkXPTtm5sUshk2BwbGjgdCb5R5mskP4z3vnTLw12bJGjMeZeobKCpGWHZWzWs
-          JFROG_USERNAME: onkarko@cybage.com
-          JFROG_URL: https://aritfacts.jfrog.io/artifactory/artifacts_pocs-libs-snapshot-local/
+          JFROG_API_KEY: ${{ secrets.JFROG_API_KEY }}
+          JFROG_USERNAME: ${{ secrets.JFROG_USERNAME }}
 
       - name: Send notification on Slack using Webhooks - Success
         if: ${{ success() }}
