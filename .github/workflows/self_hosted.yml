@@ -3,7 +3,7 @@ name: slack_github_action
 on:
   push:
     branches:
-      - self_hosted_runner_windows 
+      - jfrog_artifacts
 
 jobs:
   slack_notifier:
