@@ -48,8 +48,8 @@ jobs:
               jfrog rt u target/*.jar artifacts_pocs-libs-snapshot-local/ --url=https://aritfacts.jfrog.io/artifactory/artifacts_pocs-libs-snapshot-local/
 
         env:
-          JFROG_API_KEY: ${{ secrets.JFROG_API_KEY }}
-          JFROG_USERNAME: ${{ secrets.JFROG_USERNAME }}
+          JFROG_API_KEY: onkarko@cybage.com
+          JFROG_USERNAME: AKCpBrwZ8DACFkXPTtm5sUshk2BwbGjgdCb5R5mskP4z3vnTLw12bJGjMeZeobKCpGWHZWzWs
 
       - name: Send notification on Slack using Webhooks - Success
         if: ${{ success() }}
