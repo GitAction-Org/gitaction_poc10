@@ -3,7 +3,7 @@ name: slack_github_action
 on:
   push:
     branches:
-      - feedback_status
+      - jfrog_artifacts
 
 jobs:
   slack_notifier:
@@ -19,15 +19,15 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
 
-      - name: Install JFrog GitHub Action
-        uses: jfrog/setup-jfrog-cli@v1
-        with:
-          jfrog-version: '1.47.0'
+      - name: Install JFrog CLI
+        run: |
+          curl -fL https://getcli.jfrog.io | sh
+          sudo mv jfrog /usr/local/bin/  # Assuming jfrog is in the current directory
 
       - name: Build Maven project
         run: |
           mvn clean install
-          export MAVEN_EXIT_CODE=$?
+          # export MAVEN_EXIT_CODE=$?
 
       - name: Generate code coverage report
         run: |
@@ -53,32 +53,24 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-      - name: Use JFrog GitHub Action to Push Artifacts
-        uses: advancedcsg-open/action-jfrog-cli@master
-        with:
-          server-id: 'artifactory-server-id'
-          repository: 'artifacts_pocs-libs-snapshot-local'
-          package: '*.jar'
-          target-path: '/'
+      - name: Set JFrog CLI Path
+        run: |
+          export PATH=$PATH:/usr/local/bin
 
-      - name: Send notification on Slack using Webhooks - Success
-        if: ${{ success() }}
+      - name: Push Artifacts to JFrog
+        run: |
+                  jfrog rt u target/*.jar artifacts_pocs-libs-snapshot-local/ --url=https://aritfacts.jfrog.io/artifactory/artifacts_pocs-libs-snapshot-local/ --access-token=eyJ2ZXIiOiIyIiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJHbGs3b1N0VU1YSGxNdTlzbUZZSVdld0liR0MwSXA2YWhJcEhaM3RUcFBvIn0.eyJzdWIiOiJqZmFjQDAxaHFrNjAxcHhjdGVtMW5qYXJjcWUxY3liL3VzZXJzL29ua2Fya29AY3liYWdlLmNvbSIsInNjcCI6ImFwcGxpZWQtcGVybWlzc2lvbnMvYWRtaW4iLCJhdWQiOiIqQCoiLCJpc3MiOiJqZmZlQDAxaHFrNjAxcHhjdGVtMW5qYXJjcWUxY3liIiwiaWF0IjoxNzA5MTExODM1LCJqdGkiOiIzMTNkMjFkZi1mNDE2LTQxM2MtYmJlMC1lMTI1NTlmNDAwNTAifQ.3s9yioc5sgDsvdBLE_YGjXzrdZm2hr90WTAanmIwshFVb-CPzRyH1Nv-rCYxuqgxbHQdobM6616kmwfKezd9anBuLSLuvw5Jx5OK7wQAjo4Qktx9kRMs5yd_DKDn8-PBlB9FGl0x25fDQwXUaSHMyX9ecQoon0NBJH5z5_X8GDH5rUfsVZ9DS8Bq0PiA203yDGQytdp70u-ISk-eQpQwIcUhsLJqw-CM4spBKz01k6I6QvG2kUfjt8CqyOXvCQsGsCmTowsrf02PSnDeJBFHCfk1TkCOtH0BY3rcTDDcWkXX1R-YfRMbL5WCMBjRHKl8S3qTBngPK5xq0rqXPO3vZw
+
+
+        # env:
+        #   JFROG_ACCESS_TOKEN: eyJ2ZXIiOiIyIiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJHbGs3b1N0VU1YSGxNdTlzbUZZSVdld0liR0MwSXA2YWhJcEhaM3RUcFBvIn0.eyJzdWIiOiJqZmFjQDAxaHFrNjAxcHhjdGVtMW5qYXJjcWUxY3liL3VzZXJzL29ua2Fya29AY3liYWdlLmNvbSIsInNjcCI6ImFwcGxpZWQtcGVybWlzc2lvbnMvYWRtaW4iLCJhdWQiOiIqQCoiLCJpc3MiOiJqZmZlQDAxaHFrNjAxcHhjdGVtMW5qYXJjcWUxY3liIiwiaWF0IjoxNzA5MTExODM1LCJqdGkiOiIzMTNkMjFkZi1mNDE2LTQxM2MtYmJlMC1lMTI1NTlmNDAwNTAifQ.3s9yioc5sgDsvdBLE_YGjXzrdZm2hr90WTAanmIwshFVb-CPzRyH1Nv-rCYxuqgxbHQdobM6616kmwfKezd9anBuLSLuvw5Jx5OK7wQAjo4Qktx9kRMs5yd_DKDn8-PBlB9FGl0x25fDQwXUaSHMyX9ecQoon0NBJH5z5_X8GDH5rUfsVZ9DS8Bq0PiA203yDGQytdp70u-ISk-eQpQwIcUhsLJqw-CM4spBKz01k6I6QvG2kUfjt8CqyOXvCQsGsCmTowsrf02PSnDeJBFHCfk1TkCOtH0BY3rcTDDcWkXX1R-YfRMbL5WCMBjRHKl8S3qTBngPK5xq0rqXPO3vZw
+          
+
+      - name: Post to a Slack channel
+        id: slack
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          payload: |
-            {
-              "text": "Maven project built successfully."
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-      - name: Send notification on Slack using Webhooks - Failure
-        if: ${{ failure() }}
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          payload: |
-            {
-              "text": "Maven build failed. Please check the build logs for details."
-            }
+          channel-id: 'C06L6F99PKN'
+          payload: '{"text": "GitHub build result: ${{ job.status }}"}'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
