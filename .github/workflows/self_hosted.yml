@@ -54,7 +54,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Use JFrog GitHub Action to Push Artifacts
-        uses: jfrog/publish-artifacts-github-action@v1
+        uses: advancedcsg-open/action-jfrog-cli@master
         with:
           server-id: 'artifactory-server-id'
           repository: 'artifacts_pocs-libs-snapshot-local'
