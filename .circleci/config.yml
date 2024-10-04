@@ -1,44 +1,37 @@
-# CircleCI configuration file
 version: 2.1
 
 jobs:
-  # Job one with a unique name
   say_hello:
     docker:
      - image: cimg/base:2022.05
     steps:
       - run: echo "Say hello to YAML onkar!"
   
-  # Job two with a unique name
   say_goodbye:
     docker:
      - image: cimg/base:2022.05
     steps:
       - run: echo "Say goodbye to YAML new !"
   
-  # Job for building Maven project and generating code coverage
+  
   build_and_test_maven:
     docker:
-      - image: cimg/openjdk:17.0  # Choose the appropriate JDK version for your Maven project
+      - image: cimg/openjdk:17.0  
     steps:
-      - checkout  # Check out the code from your repository
+      - checkout  
 
-      # Build Maven project
       - run: |
           mvn clean install
           export MAVEN_EXIT_CODE=$?
 
-      # Generate code coverage report
       - run: mvn jacoco:report
 
-      # Publish code coverage result
       - run: echo "Uploading code coverage results..."
       - store_artifacts:
           path: target/site/jacoco/index.html
           destination: code-coverage
 
 workflows:
-  # Name of workflow
   hello_and_goodbye:
     # List of jobs that will run
     jobs:
