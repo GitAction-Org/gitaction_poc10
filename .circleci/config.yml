@@ -24,19 +24,15 @@ jobs:
       - checkout  # Check out the code from your repository
 
       # Build Maven project
-      - name: Build Maven project
-        run: |
+      - run: |
           mvn clean install
           export MAVEN_EXIT_CODE=$?
 
       # Generate code coverage report
-      - name: Generate code coverage report
-        run: |
-          mvn jacoco:report
+      - run: mvn jacoco:report
 
       # Publish code coverage result
-      - name: Publish code coverage result
-        run: echo "Uploading code coverage results..."
+      - run: echo "Uploading code coverage results..."
       - store_artifacts:
           path: target/site/jacoco/index.html
           destination: code-coverage
