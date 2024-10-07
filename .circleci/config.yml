@@ -11,8 +11,7 @@ jobs:
     docker:
      - image: cimg/base:2022.05
     steps:
-      - run: echo "Say goodbye to YAML new !"
-  
+      - run: echo "Say goodbye to YAML new!"
   
   build_and_test_maven:
     docker:
@@ -20,22 +19,26 @@ jobs:
     steps:
       - checkout  
 
-      - run: |
-          mvn clean install
-          export MAVEN_EXIT_CODE=$?
+      # Run Maven build and tests
+      - run: mvn clean install
 
+      # Generate JaCoCo coverage report
       - run: mvn jacoco:report
 
-      - run: echo "Uploading code coverage results..."
+      # Generate test results in JUnit format (for CircleCI to parse)
+      - run: mvn surefire-report:report
+
+      # Store code coverage report as artifacts
       - store_artifacts:
           path: target/site/jacoco/index.html
           destination: code-coverage
-      - store_test_results:
-          path: target/site/jacoco/jacoco.xml
 
+      # Store test results (JUnit XML)
+      - store_test_results:
+          path: target/surefire-reports
+      
 workflows:
   hello_and_goodbye:
-    # List of jobs that will run
     jobs:
       - say_hello
       - say_goodbye
