@@ -2,20 +2,20 @@ version: 2.1
 
 jobs:
   say_hello:
-    docker:
-     - image: cimg/base:2022.05
+    machine: true  # Use a self-hosted runner machine
+    resource_class: gitactionorg/circleci  # Replace with your self-hosted runner's resource class
     steps:
       - run: echo "Say hello to YAML onkar!"
-  
+
   say_goodbye:
-    docker:
-     - image: cimg/base:2022.05
+    machine: true  # Use a self-hosted runner machine
+    resource_class: gitactionorg/circleci  # Replace with your self-hosted runner's resource class
     steps:
       - run: echo "Say goodbye to YAML new!"
-  
+
   build_and_test_maven:
-    docker:
-      - image: cimg/openjdk:17.0  
+    machine: true  # Use a self-hosted runner machine
+    resource_class: gitactionorg/circleci  # Replace with your self-hosted runner's resource class
     steps:
       - checkout  
 
@@ -36,7 +36,7 @@ jobs:
       # Store test results (JUnit XML)
       - store_test_results:
           path: target/surefire-reports
-      
+
 workflows:
   hello_and_goodbye:
     jobs:
