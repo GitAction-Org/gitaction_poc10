@@ -1,18 +1,25 @@
 version: 2.1
 
 orbs:
-  maven: circleci/maven@1.1
+  maven: circleci/maven@1.1 # Maven orb
+
+workflows:
+  build_and_test:
+    jobs:
+      - maven/build_and_test: # Using Maven's build and test job
+          version: <maven-version> # Specify the Maven version here
 
 jobs:
-
   build_and_test_maven:
     machine: true  
     resource_class: gitactionorg/circleci
     steps:
+      - checkout # Add a checkout step to pull your code
+
       - maven/test 
-      
+
       - maven/install 
-      
+
       - maven/jacoco 
 
       - store_artifacts:
@@ -21,8 +28,3 @@ jobs:
 
       - store_test_results:
           path: target/surefire-reports
-
-workflows:
-  hello_and_goodbye:
-    jobs:
-      - build_and_test_maven
