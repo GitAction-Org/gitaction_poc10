@@ -1,39 +1,42 @@
 version: 2.1
 
+# Importing orbs
+orbs:
+  maven: circleci/maven@3.0.0  # Maven orb for build and test steps
+  node: circleci/node@4.7.0    # Example, not used but useful if you want NodeJS jobs
+  codecov: circleci/codecov@3.2.0 # For code coverage
+  checkout: circleci/checkout@3.1.1  # Orb for checking out the repo
+
 jobs:
   say_hello:
     machine: true  
-    resource_class: gitactionorg/circleci 
+    resource_class: gitactionorg/circleci
     steps:
-      - run: echo "Say hello to YAML onkar!"
+      - run: echo "Say hello to YAML Onkar!"
 
   say_goodbye:
     machine: true  
     resource_class: gitactionorg/circleci  
     steps:
-      - run: echo "Say goodbye to YAML new!"
+      - run: echo "Say goodbye to YAML New!"
 
   build_and_test_maven:
     machine: true  
-    resource_class: gitactionorg/circleci  
+    resource_class: gitactionorg/circleci
     steps:
-      - checkout  
+      - checkout/checkout  # Use orb for checking out the code
 
-      
-      - run: mvn clean install
+      - maven/with_cache:
+          steps:
+            - maven/test  # Automatically runs `mvn clean test`
+            - maven/install  # Automatically runs `mvn install`
+            - maven/jacoco  # Generates Jacoco coverage report
+            - maven/surefire_report  # Runs surefire report
 
-      
-      - run: mvn jacoco:report
-
-      
-      - run: mvn surefire-report:report
-
-      
       - store_artifacts:
           path: target/site/jacoco/index.html
           destination: code-coverage
 
-      
       - store_test_results:
           path: target/surefire-reports
 
@@ -43,3 +46,4 @@ workflows:
       - say_hello
       - say_goodbye
       - build_and_test_maven
+      
