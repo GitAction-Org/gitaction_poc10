@@ -3,9 +3,7 @@ version: 2.1
 # Importing orbs
 orbs:
   maven: circleci/maven@3.0.0  # Maven orb for build and test steps
-  node: circleci/node@4.7.0    # Example, not used but useful if you want NodeJS jobs
-  codecov: circleci/codecov@3.2.0 # For code coverage
-  checkout: circleci/checkout@3.1.1  # Orb for checking out the repo
+  checkout: circleci/checkout@0.7.3  # Checkout orb for checking out the repo
 
 jobs:
   say_hello:
@@ -24,14 +22,13 @@ jobs:
     machine: true  
     resource_class: gitactionorg/circleci
     steps:
-      - checkout/checkout  # Use orb for checking out the code
+      - checkout/checkout  # Using orb for checking out the code
 
-      - maven/with_cache:
-          steps:
-            - maven/test  # Automatically runs `mvn clean test`
-            - maven/install  # Automatically runs `mvn install`
-            - maven/jacoco  # Generates Jacoco coverage report
-            - maven/surefire_report  # Runs surefire report
+      - maven/test  # Automatically runs `mvn clean test`
+      
+      - maven/install  # Automatically runs `mvn install`
+      
+      - maven/jacoco  # Generates Jacoco coverage report
 
       - store_artifacts:
           path: target/site/jacoco/index.html
@@ -46,4 +43,3 @@ workflows:
       - say_hello
       - say_goodbye
       - build_and_test_maven
-      
