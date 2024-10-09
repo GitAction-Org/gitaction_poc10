@@ -2,8 +2,8 @@ version: 2.1
 
 # Importing orbs
 orbs:
-  maven: circleci/maven@3.0.0  # Maven orb for build and test steps
-  checkout: circleci/checkout@0.7.3  # Checkout orb for checking out the repo
+  maven: circleci/maven@1.4.1
+  checkout: circleci/checkout@0.7.3  
 
 jobs:
   say_hello:
