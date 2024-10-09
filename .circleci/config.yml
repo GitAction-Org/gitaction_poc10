@@ -3,7 +3,6 @@ version: 2.1
 # Importing orbs
 orbs:
   maven: circleci/maven@1.4.1
-  checkout: circleci/checkout@0.7.3  
 
 jobs:
   say_hello:
@@ -22,13 +21,11 @@ jobs:
     machine: true  
     resource_class: gitactionorg/circleci
     steps:
-      - checkout/checkout  # Using orb for checking out the code
-
-      - maven/test  # Automatically runs `mvn clean test`
+      - maven/test  
       
-      - maven/install  # Automatically runs `mvn install`
+      - maven/install  
       
-      - maven/jacoco  # Generates Jacoco coverage report
+      - maven/jacoco  
 
       - store_artifacts:
           path: target/site/jacoco/index.html
