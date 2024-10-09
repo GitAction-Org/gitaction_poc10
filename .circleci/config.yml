@@ -21,11 +21,11 @@ jobs:
     machine: true  
     resource_class: gitactionorg/circleci
     steps:
-      - maven/test  
+      - maven/test 
       
-      - maven/install  
+      - maven/install 
       
-      - maven/jacoco  
+      - maven/jacoco 
 
       - store_artifacts:
           path: target/site/jacoco/index.html
