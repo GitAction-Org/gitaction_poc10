@@ -32,6 +32,11 @@ version: 2.1
 orbs:
   maven: circleci/maven@1.4.1
 
+executors:
+  self_hosted_runner:
+    machine: true
+    resource_class: gitactionorg/circleci 
+    
 workflows:
   maven_test:
     jobs:
