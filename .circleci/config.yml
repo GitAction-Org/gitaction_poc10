@@ -1,28 +1,37 @@
-version: 2.1
+# version: 2.1
 
+# orbs:
+#   maven: circleci/maven@1.4.1
+
+# jobs:
+
+#   build_and_test_maven:
+#     machine: true  
+#     resource_class: gitactionorg/circleci
+#     steps:
+#       - maven/test 
+      
+#       - maven/install 
+      
+#       - maven/jacoco 
+
+#       - store_artifacts:
+#           path: target/site/jacoco/index.html
+#           destination: code-coverage
+
+#       - store_test_results:
+#           path: target/surefire-reports
+
+# workflows:
+#   hello_and_goodbye:
+#     jobs:
+#       - build_and_test_maven
+
+version: 2.1
 orbs:
   maven: circleci/maven@1.4.1
-
-jobs:
-
-  build_and_test_maven:
-    machine: true  
-    resource_class: gitactionorg/circleci
-    steps:
-      - maven/test 
-      
-      - maven/install 
-      
-      - maven/jacoco 
-
-      - store_artifacts:
-          path: target/site/jacoco/index.html
-          destination: code-coverage
-
-      - store_test_results:
-          path: target/surefire-reports
-
 workflows:
-  hello_and_goodbye:
+  maven_test:
     jobs:
-      - build_and_test_maven
+      - maven/test:
+          command: '-X verify'
