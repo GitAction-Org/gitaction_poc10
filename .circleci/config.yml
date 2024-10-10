@@ -36,11 +36,12 @@ executors:
   self_hosted_runner:
     machine: true
     resource_class: gitactionorg/circleci 
-    
+
 workflows:
   maven_test:
     jobs:
       - maven/test:
+          executor: self_hosted_runner 
           command: '-X verify'
           post-steps:
             - store_artifacts:
